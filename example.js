@@ -14,6 +14,29 @@
 //     "children": children
 // };
 
+
+/*
+
+1. First page will show an input field for an url and submit button
+2. After you enter url and click submit button you will see loading 
+3. After loading is done you'll see your graph
+4. Saving all entered links into database
+
+
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
 function transformApiTreeToD3Tree(apiTree) {
 
   function transform(name, treeNode) {

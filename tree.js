@@ -7,6 +7,11 @@ const parseDomain = require('parse-domain')
 
 const app = express();
 
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
+// buildTree starts at the single url and from there recursively it visits all the children of that web page. 
+// Children are found as hyperlinks that are present in the fetched HTML page.
+// There's a limit on how much work we are going to do by storing all the visited domains in the 'visited' set.  
 function buildTree(url, maxVisitedCount = 100, parsedUrl = null, visited = new Set()) {
     parsedUrl = parsedUrl || parseDomain(url)
 
@@ -35,7 +40,6 @@ function buildTree(url, maxVisitedCount = 100, parsedUrl = null, visited = new S
                         }
                     })
                     .filter(([link, parsedUrl]) => !!parsedUrl)
-
                 Promise.all(links.map(([link, parsedUrl]) => buildTree(link, maxVisitedCount, parsedUrl, visited)))
                     .then(linkTrees => {
                         const tree = linkTrees.reduce((acc, curr) => Object.assign(acc, curr), {})
@@ -52,7 +56,7 @@ function buildTree(url, maxVisitedCount = 100, parsedUrl = null, visited = new S
 app.use('/d3js_projects', express.static(path.join(__dirname, 'd3js_projects')))
 
 app.get('/api/tree', (req, res) => {
-    buildTree('https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/has')
+    buildTree(req.query.url)
      .then(result => res.send(result))
      .catch(_ => console.log('shit'))
 })
