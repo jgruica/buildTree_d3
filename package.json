@@ -15,6 +15,6 @@
     "express": "^4.16.1",
     "http-server": "^0.10.0",
     "parse-domain": "^1.1.0",
-    "request": "^2.83.0",
+    "request": "^2.83.0"
   }
 }
