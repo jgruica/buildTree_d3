@@ -107,10 +107,10 @@
     inputBox.setAttribute('placeholder', 'Enter url...');
     document.body.appendChild(inputBox);
 
-    let submitBtn = document.createElement('button');
-    submitBtn.innerHTML = 'Show a graph';
-    submitBtn.setAttribute('id', 'submitBtn');
-    document.body.appendChild(submitBtn);
+    // let submitBtn = document.createElement('button');
+    // submitBtn.innerHTML = 'Show a graph';
+    // submitBtn.setAttribute('id', 'submitBtn');
+    // document.body.appendChild(submitBtn);
 
     document.getElementById('inputBox').addEventListener('keypress', function (e) {
       var key = e.which || e.keyCode;
@@ -119,9 +119,9 @@
         // console.log(url)
         createVisualization();
         //store url into build tree function and call function with that one
-        document.getElementById('submitBtn').addEventListener('click', function () {
-          createVisualization();
-        });
+        // document.getElementById('submitBtn').addEventListener('click', function () {
+        //   createVisualization();
+        // });
 
         let loader = document.createElement('div');
         loader.setAttribute('id', 'loader');
