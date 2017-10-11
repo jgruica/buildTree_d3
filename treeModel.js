@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 let tree = new Schema({
     url: String,
-    data: String
+    data: String,
 })
 
 
