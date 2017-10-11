@@ -5,27 +5,31 @@
 
 
   body {
-    /*background-color: #FFE4E1;*/
     font-family: 'Merriweather', serif;
   }
+
   .node circle {
     fill: #4ECDC4;
     stroke: #4ECDC4;
     stroke-width: 5px;
   }
+
   .node text {
     font: 18px;
   }
+
   .link {
     fill: none;
     stroke: #ccc;
     stroke-width: 3.5px;
   }
+
   #title {
     text-align: center;
     font-size: 25px;
     font-weight: bold;
   }
+
   #inputBox {
     width: 45%;
     padding: 12px 20px;
@@ -37,24 +41,10 @@
     display: block;
     margin: 40px auto;
   }
+
   #inputBox:focus {
     border: 2px solid #4ECDC4;
   }
-/*
-
-  #submitBtn {
-    padding: 12px 20px;
-    background-color: white;
-    color: black;
-    border: 2px solid #00CED1;
-    text-align: center;
-    display: inline-block;
-    font-size: 16px;
-    margin: 0 auto;
-    position: relative;
-    display: block;
-  }*/
-
 
   #loader {
     position: relative;
@@ -104,27 +94,18 @@
     inputBox.setAttribute('placeholder', 'Enter a url...');
     document.body.appendChild(inputBox);
 
-    // let submitBtn = document.createElement('button');
-    // submitBtn.innerHTML = 'Show a graph';
-    // submitBtn.setAttribute('id', 'submitBtn');
-    // document.body.appendChild(submitBtn);
-
     document.getElementById('inputBox').addEventListener('keypress', function (e) {
       var key = e.which || e.keyCode;
       if (key === 13) {
         let url = document.getElementById('inputBox').value;
         createVisualization();
 
-        // document.getElementById('submitBtn').addEventListener('click', function () {
-        //   createVisualization();
-        // });
-
         let loader = document.createElement('div');
         loader.setAttribute('id', 'loader');
         document.body.appendChild(loader);
 
-        function showLoader() { 
-          document.getElementById('loader').style.display = 'inline'; 
+        function showLoader() {
+          document.getElementById('loader').style.display = 'inline';
         }
 
         function hideLoader() {
@@ -138,11 +119,10 @@
           xhr.onreadystatechange = () => {
             showLoader();
             if (xhr.readyState === 4 && xhr.status === 200) {
-              // inputBox.value = "";
               d3.request('/api/tree/')
                 .mimeType("application/json")
                 .response((xhr) => { return JSON.parse(xhr.responseText) })
-              
+
               var data = JSON.parse(xhr.responseText);
               hideLoader();
 
@@ -194,12 +174,8 @@
               root.x0 = height / 2;
               root.y0 = 0;
 
-
-
               // // Collapse after the second level
               root.children.forEach(collapse);
-
-
 
               update(root);
 
@@ -213,23 +189,17 @@
               }
 
               function update(source) {
-
                 // Assigns the x and y position for the nodes
                 var treeData = treemap(root);
-
                 // Compute the new tree layout.
                 var nodes = treeData.descendants(),
                   links = treeData.descendants().slice(1);
-
                 // Normalize for fixed-depth.
                 nodes.forEach(function (d) { d.y = d.depth * 180 });
-
                 // ****************** Nodes section ***************************
-
                 // Update the nodes...
                 var node = svg.selectAll('g.node')
                   .data(nodes, function (d) { return d.id || (d.id = ++i); });
-
                 // Enter any new modes at the parent's previous position.
                 var nodeEnter = node.enter().append('g')
                   .attr('class', 'node')
@@ -237,7 +207,6 @@
                     return "translate(" + source.y0 + "," + source.x0 + ")";
                   })
                   .on('click', click);
-
                 // Add Circle for the nodes
                 nodeEnter.append('circle')
                   .attr('class', 'node')
@@ -256,17 +225,14 @@
                     return d.children || d._children ? "end" : "start";
                   })
                   .text(function (d) { return d.data.name; });
-
                 // UPDATE
                 var nodeUpdate = nodeEnter.merge(node);
-
                 // Transition to the proper position for the node
                 nodeUpdate.transition()
                   .duration(duration)
                   .attr("transform", function (d) {
                     return "translate(" + d.y + "," + d.x + ")";
                   });
-
                 // Update the node attributes and style
                 nodeUpdate.select('circle.node')
                   .attr('r', 10)
@@ -274,8 +240,6 @@
                     return d._children ? "lightsteelblue" : "#fff";
                   })
                   .attr('cursor', 'pointer');
-
-
                 // Remove any exiting nodes
                 var nodeExit = node.exit().transition()
                   .duration(duration)
@@ -283,7 +247,6 @@
                     return "translate(" + source.y + "," + source.x + ")";
                   })
                   .remove();
-
                 // On exit reduce the node circles size to 0
                 nodeExit.select('circle')
                   .attr('r', 1e-6);
@@ -305,15 +268,12 @@
                     var o = { x: source.x0, y: source.y0 }
                     return diagonal(o, o)
                   });
-
                 // UPDATE
                 var linkUpdate = linkEnter.merge(link);
-
                 // Transition back to the parent element position
                 linkUpdate.transition()
                   .duration(duration)
                   .attr('d', function (d) { return diagonal(d, d.parent) });
-
                 // Remove any exiting links
                 var linkExit = link.exit().transition()
                   .duration(duration)
@@ -322,13 +282,11 @@
                     return diagonal(o, o)
                   })
                   .remove();
-
                 // Store the old positions for transition.
                 nodes.forEach(function (d) {
                   d.x0 = d.x;
                   d.y0 = d.y;
                 });
-
                 // Creates a curved (diagonal) path from parent to the child nodes
                 function diagonal(s, d) {
 
@@ -339,7 +297,6 @@
 
                   return path
                 }
-
                 // Toggle children on click.
                 function click(d) {
                   if (d.children) {
