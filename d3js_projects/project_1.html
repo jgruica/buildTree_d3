@@ -1,15 +1,22 @@
 <!DOCTYPE html>
 <meta charset="UTF-8">
 <style>
+  @import url('https://fonts.googleapis.com/css?family=Merriweather');
+
+
+  body {
+    /*background-color: #FFE4E1;*/
+    font-family: 'Merriweather', serif;
+  }
   .node circle {
-    fill: #00CED1;
-    stroke: #00CED1;
+    fill: #4ECDC4;
+    stroke: #4ECDC4;
     stroke-width: 3px;
   }
 
 
   .node text {
-    font: 12px sans-serif;
+    font: 15px sans-serif;
   }
 
 
@@ -31,7 +38,7 @@
     width: 60%;
     padding: 12px 20px;
     box-sizing: border-box;
-    border: 3px solid #00CED1;
+    border: 3px solid #4ECDC4;
     border-radius: 4px;
     font-size: 20px;
     position: relative;
@@ -41,9 +48,9 @@
 
 
   #inputBox:focus {
-    border: 2px solid #00CED1;
+    border: 2px solid #4ECDC4;
   }
-
+/*
 
   #submitBtn {
     padding: 12px 20px;
@@ -56,7 +63,7 @@
     margin: 0 auto;
     position: relative;
     display: block;
-  }
+  }*/
 
 
   #loader {
@@ -66,7 +73,7 @@
     margin-top: 20px;
     border: 16px solid #f3f3f3;
     border-radius: 50%;
-    border-top: 16px solid #00CED1;
+    border-top: 16px solid #4ECDC4;
     width: 120px;
     height: 120px;
     -webkit-animation: spin 2s linear infinite;
@@ -170,7 +177,7 @@
               console.log(treeData);
 
               // Set the dimensions and margins of the diagram
-              var margin = { top: 100, right: 50, bottom: 10, left: 150 },
+              var margin = { top: 80, right: 50, bottom: 10, left: 150 },
                 width = 1300 - margin.left - margin.right,
                 height = 900 - margin.top - margin.bottom;
 
