@@ -24,6 +24,7 @@ mongoose.connection.once('open', () => {
 function buildTree(url, maxVisitedCount = 100, parsedUrl = null, visited = new Set()) {
     parsedUrl = parsedUrl || parseDomain(url)
 
+    // console.log('Inside BT')
     const fullDomain = `${parsedUrl.subdomain}.${parsedUrl.domain}.${parsedUrl.tld}`
     const nullReturn = { [fullDomain]: null }
 
@@ -64,15 +65,42 @@ function buildTree(url, maxVisitedCount = 100, parsedUrl = null, visited = new S
 
 app.use('/d3js_projects', express.static(path.join(__dirname, 'd3js_projects')))
 
+
+
 app.get('/api/tree', (req, res) => {
     // if it's not in db bulid tree
     // if it's in db get that data from db
-    Tree.findOne({url: req.query.url}, (err, result) => {
-        if(err) res.status(400).send('Error');
+    // have to stringfy data
+    Tree.findOne({ url: req.query.url }, (err, tree) => {
+        // if it's not in db build tree
+        if (!err) {
+            if (!tree) {
+                //build tree
+                buildTree(req.query.url)
+                    .then(result => {
+                        let strResult = JSON.stringify(result);
+                        let treeData = new Tree({
+                            url: req.query.url,
+                            data: strResult
+                        });
+                        treeData.save().then((doc)=> {
+                            // console.log(JSON.parse(doc.data))
+                            res.send(JSON.parse(doc.data))
+                        }). catch((err) => {
+                            console.log('Error')
+                        })
+                    })
+                    .catch(_ => console.log('shiiit'))
+                //if its not error and if tree exist
+            } else {
+                res.send(JSON.parse(tree.data));
+            }
+        } 
+
     })
-    buildTree(req.query.url)
-        .then(result => res.send(result))
-        .catch(_ => console.log('shit'))
+    // buildTree(req.query.url)
+    //     .then(result => res.send(result))
+    //     .catch(_ => console.log('shiiit'))
 })
 
 app.get('/', (req, res) => {

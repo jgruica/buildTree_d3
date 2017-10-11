@@ -148,7 +148,8 @@
               
               var data = JSON.parse(xhr.responseText);
               hideLoader();
-              // transforming data into json
+
+              // transforming data into readable d3 json
               function transformApiTreeToD3Tree(apiTree) {
                 function transform(name, treeNode) {
                   if (!treeNode) return { name };
@@ -165,9 +166,8 @@
               }
 
               let treeData = transformApiTreeToD3Tree(data)
-              // console.log(treeData);
 
-
+              console.log(treeData);
 
               // Set the dimensions and margins of the diagram
               var margin = { top: 100, right: 50, bottom: 10, left: 150 },
