@@ -4,11 +4,20 @@ const Promise = require("bluebird");
 const request = require('request');
 const cheerio = require('cheerio');
 const parseDomain = require('parse-domain')
-
+const mongoose = require('mongoose');
 const app = express();
 
+const Tree = require('./treeModel');
+
 const bodyParser = require('body-parser');
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+
+mongoose.connect('mongodb://tree:123456@ds117485.mlab.com:17485/treedata');
+mongoose.connection.once('open', () => {
+    console.log('Connected to Database');
+});
 // buildTree starts at the single url and from there recursively it visits all the children of that web page. 
 // Children are found as hyperlinks that are present in the fetched HTML page.
 // There's a limit on how much work we are going to do by storing all the visited domains in the 'visited' set.  
@@ -56,14 +65,23 @@ function buildTree(url, maxVisitedCount = 100, parsedUrl = null, visited = new S
 app.use('/d3js_projects', express.static(path.join(__dirname, 'd3js_projects')))
 
 app.get('/api/tree', (req, res) => {
+    // if it's not in db bulid tree
+    // if it's in db get that data from db
+    Tree.findOne({url: req.query.url}, (err, result) => {
+        if(err) res.status(400).send('Error');
+    })
     buildTree(req.query.url)
-     .then(result => res.send(result))
-     .catch(_ => console.log('shit'))
+        .then(result => res.send(result))
+        .catch(_ => console.log('shit'))
 })
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname + '/d3js_projects/project_1.html'));
 });
+
+
+
+
 
 app.listen(3000);
 console.log('Listening on port 3000');

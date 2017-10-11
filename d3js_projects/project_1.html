@@ -2,8 +2,8 @@
 <meta charset="UTF-8">
 <style>
   .node circle {
-    fill: #fff;
-    stroke: steelblue;
+    fill: #00CED1;
+    stroke: #00CED1;
     stroke-width: 3px;
   }
 
@@ -31,9 +31,9 @@
     width: 60%;
     padding: 12px 20px;
     box-sizing: border-box;
-    border: 2px solid lightslategray;
+    border: 3px solid #00CED1;
     border-radius: 4px;
-    font-size: 18px;
+    font-size: 20px;
     position: relative;
     display: block;
     margin: 40px auto;
@@ -41,7 +41,7 @@
 
 
   #inputBox:focus {
-    border: 3px solid #555;
+    border: 2px solid #00CED1;
   }
 
 
@@ -49,7 +49,7 @@
     padding: 12px 20px;
     background-color: white;
     color: black;
-    border: 2px solid lightslategray;
+    border: 2px solid #00CED1;
     text-align: center;
     display: inline-block;
     font-size: 16px;
@@ -66,7 +66,7 @@
     margin-top: 20px;
     border: 16px solid #f3f3f3;
     border-radius: 50%;
-    border-top: 16px solid lightslategray;
+    border-top: 16px solid #00CED1;
     width: 120px;
     height: 120px;
     -webkit-animation: spin 2s linear infinite;
@@ -98,13 +98,13 @@
   <script src="/d3js_projects/d3.js"></script>
   <script>
     let title = document.createElement('div');
-    title.innerHTML = 'Going into depth of the internet';
+    title.innerHTML = 'Explore the depths of the internet';
     title.setAttribute('id', 'title')
     document.body.appendChild(title);
 
     let inputBox = document.createElement('input');
     inputBox.setAttribute('id', 'inputBox');
-    inputBox.setAttribute('placeholder', 'Enter url...');
+    inputBox.setAttribute('placeholder', 'Enter a url...');
     document.body.appendChild(inputBox);
 
     // let submitBtn = document.createElement('button');
@@ -116,9 +116,8 @@
       var key = e.which || e.keyCode;
       if (key === 13) {
         let url = document.getElementById('inputBox').value;
-        // console.log(url)
         createVisualization();
-        //store url into build tree function and call function with that one
+
         // document.getElementById('submitBtn').addEventListener('click', function () {
         //   createVisualization();
         // });
@@ -142,7 +141,7 @@
           xhr.onreadystatechange = () => {
             showLoader();
             if (xhr.readyState === 4 && xhr.status === 200) {
-              inputBox.value = "";
+              // inputBox.value = "";
               d3.request('/api/tree/')
                 .mimeType("application/json")
                 .response((xhr) => { return JSON.parse(xhr.responseText) })
@@ -171,9 +170,9 @@
 
 
               // Set the dimensions and margins of the diagram
-              var margin = { top: 170, right: 50, bottom: 10, left: 150 },
-                width = 1000 - margin.left - margin.right,
-                height = 800 - margin.top - margin.bottom;
+              var margin = { top: 100, right: 50, bottom: 10, left: 150 },
+                width = 1300 - margin.left - margin.right,
+                height = 900 - margin.top - margin.bottom;
 
               // append the svg object to the body of the page
               // appends a 'group' element to 'svg'
