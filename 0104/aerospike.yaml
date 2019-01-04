@@ -1,0 +1,109 @@
+apiVersion: v1
+data:
+  aerospike.conf: "# aerospike configuration\n    #default config file\nservice {\n
+    \   user root\n    group root\n    paxos-single-replica-limit 1\n    pidfile /var/run/aerospike/asd.pid\n
+    \   service-threads 4\n    transaction-queues 4\n    transaction-threads-per-queue
+    4\n    proto-fd-max 15000\n}\nlogging {\n    file /var/log/aerospike/aerospike.log
+    {\n    context any info\n    }\n\n    console {\n    context any info\n    }\n}\nnetwork
+    {\n    service {\n    address any\n    port 3000\n    }\n    heartbeat {\n    address
+    any\n    interval 150\n    \n    mesh-seed-address-port aerospike-aerospike-0.aerospike-aerospike-mesh
+    3002\n    mode mesh\n    port 3002\n    timeout 20\n    protocol v3\n\n    }\n
+    \   fabric {\n    port 3001\n    }\n\n    info {\n    port 3003\n    }\n}\n\nnamespace
+    test {\n    replication-factor 2\n    memory-size 1G\n    default-ttl 5d\n    storage-engine
+    device {\n    file /opt/aerospike/data/test.dat\n    filesize 4G\n    }\n}\n"
+kind: ConfigMap
+metadata:
+  labels:
+    app: aerospike
+    release: aerospike
+  name: aerospike-aerospike
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+  labels:
+    app: aerospike
+    release: aerospike
+  name: aerospike-aerospike-mesh
+spec:
+  clusterIP: None
+  ports:
+  - name: aerospike-mesh
+    port: 3002
+    protocol: TCP
+  selector:
+    app: aerospike
+    release: aerospike
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+  labels:
+    app: aerospike
+    release: aerospike
+  name: aerospike-aerospike
+spec:
+  clusterIP: None
+  ports:
+  - name: aerospike-client
+    port: 3000
+    protocol: TCP
+  - name: aerospike-mesh
+    port: 3002
+    protocol: TCP
+  selector:
+    app: aerospike
+    release: aerospike
+  type: ClusterIP
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  labels:
+    app: aerospike
+    release: aerospike
+  name: aerospike-aerospike
+spec:
+  replicas: 1
+  serviceName: aerospike-aerospike-mesh
+  template:
+    metadata:
+      labels:
+        app: aerospike
+        release: aerospike
+    spec:
+      containers:
+      - image: aerospike/aerospike-server:3.14.1.2
+        imagePullPolicy: IfNotPresent
+        name: aerospike-aerospike
+        ports:
+        - containerPort: 3000
+          name: aero-clients
+        - containerPort: 3002
+          name: aero-mesh
+        - containerPort: 3003
+          name: aero-info
+        readinessProbe:
+          initialDelaySeconds: 15
+          tcpSocket:
+            port: 3000
+          timeoutSeconds: 1
+        resources: {}
+        volumeMounts:
+        - mountPath: /etc/aerospike
+          name: config-volume
+      nodeSelector: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          items:
+          - key: aerospike.conf
+            path: aerospike.conf
+          name: aerospike-aerospike
+        name: config-volume
+  volumeClaimTemplates: null
