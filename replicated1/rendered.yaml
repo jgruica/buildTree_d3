@@ -2,8 +2,8 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
-    app: grafana-a
-    release: grafana
+    app: grafana-a-a
+    release: grafana-a
   name: grafana
   namespace: default
 ---
