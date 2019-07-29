@@ -3,7 +3,7 @@ kind: ServiceAccount
 metadata:
   labels:
     app: grafana-a-a
-    release: grafana
+    release: grafana-a
   name: grafana
   namespace: default
 ---
