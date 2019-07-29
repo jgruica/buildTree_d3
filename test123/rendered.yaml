@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  access_token: TUlTU0lORw==
+  app_id: TUlTU0lORw==
+kind: Secret
+metadata:
+  labels:
+    app: coscale
+    release: coscale
+  name: coscale
+type: Opaque
