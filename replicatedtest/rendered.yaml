@@ -16,7 +16,7 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: bitcoind1
+    app: bitcoind12
     release: bitcoind
   name: bitcoind
 spec:
