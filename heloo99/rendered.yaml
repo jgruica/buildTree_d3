@@ -55,7 +55,7 @@ kind: ClusterRole
 metadata:
   labels:
     app: grafana
-    release: grafana
+    release: grafana1
   name: grafana-clusterrole
 rules: []
 ---
