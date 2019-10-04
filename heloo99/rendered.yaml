@@ -4,7 +4,7 @@ metadata:
   labels:
     app: grafana
     release: grafana
-  name: grafana
+  name: grafana-test
   namespace: default
 ---
 apiVersion: v1
@@ -13,7 +13,8 @@ metadata:
   labels:
     app: grafana
     release: grafana
-  name: grafana-test
+  name: grafana
+  namespace: default
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -22,6 +23,7 @@ metadata:
     app: grafana
     release: grafana
   name: grafana-test
+  namespace: default
 rules:
 - apiGroups:
   - policy
@@ -66,6 +68,7 @@ metadata:
     app: grafana
     release: grafana
   name: grafana-test
+  namespace: default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -110,6 +113,23 @@ subjects:
 ---
 apiVersion: v1
 data:
+  run.sh: |-
+    @test "Test Health" {
+      url="http://grafana/api/health"
+
+      code=$(curl -s -o /dev/null -I -w "%{http_code}" $url)
+      [ "$code" == "200" ]
+    }
+kind: ConfigMap
+metadata:
+  labels:
+    app: grafana
+    release: grafana
+  name: grafana-test
+  namespace: default
+---
+apiVersion: v1
+data:
   grafana.ini: |
     [analytics]
     check_for_updates = true
@@ -132,23 +152,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  run.sh: |-
-    @test "Test Health" {
-      url="http://grafana/api/health"
-
-      code=$(curl -s -o /dev/null -I -w "%{http_code}" $url)
-      [ "$code" == "200" ]
-    }
-kind: ConfigMap
-metadata:
-  labels:
-    app: grafana
-    release: grafana
-  name: grafana-test
----
-apiVersion: v1
-data:
-  admin-password: bEZRck8zT2JGYWpWZmxNeVZ3bWxuM3FvUVFNY0RuVEU0Z3JnZkVvMw==
+  admin-password: YmhKSXN1QjluRUpPYXZlelZTR01DUTlJODFqTzhEbU94eXh5NFFlOA==
   admin-user: YWRtaW4=
   ldap-toml: ""
 kind: Secret
@@ -198,10 +202,10 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 44e1d82287c39caa43a7ccfd1c18c3ec44c754dd2cf5f05b84aec5dd1419bd45
+        checksum/config: 412726d6f5b9d1b6163c962d5dd1478c2bf6b402df20639d1de0f2ecdd3966ef
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/secret: 59e99374d3380fd530f7350c0b29e575ac831aa6f6bee9e4c05d1be7b201c280
+        checksum/secret: a5318b3536abafc7ed3963e0ae5c45d667e3951c924d2e635b583428b44f7170
       labels:
         app: grafana
         release: grafana
@@ -269,6 +273,35 @@ spec:
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
+  labels:
+    app: grafana
+    release: grafana
+  name: grafana-test
+  namespace: default
+spec:
+  allowPrivilegeEscalation: true
+  fsGroup:
+    rule: RunAsAny
+  hostIPC: false
+  hostNetwork: false
+  hostPID: false
+  privileged: false
+  runAsUser:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  volumes:
+  - configMap
+  - downwardAPI
+  - emptyDir
+  - projected
+  - secret
+---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
   annotations:
     apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
     apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
@@ -315,34 +348,6 @@ spec:
   - downwardAPI
   - persistentVolumeClaim
 ---
-apiVersion: policy/v1beta1
-kind: PodSecurityPolicy
-metadata:
-  labels:
-    app: grafana
-    release: grafana
-  name: grafana-test
-spec:
-  allowPrivilegeEscalation: true
-  fsGroup:
-    rule: RunAsAny
-  hostIPC: false
-  hostNetwork: false
-  hostPID: false
-  privileged: false
-  runAsUser:
-    rule: RunAsAny
-  seLinux:
-    rule: RunAsAny
-  supplementalGroups:
-    rule: RunAsAny
-  volumes:
-  - configMap
-  - downwardAPI
-  - emptyDir
-  - projected
-  - secret
----
 apiVersion: v1
 kind: Pod
 metadata:
@@ -352,6 +357,7 @@ metadata:
     app: grafana
     release: grafana
   name: grafana-test
+  namespace: default
 spec:
   containers:
   - command:
